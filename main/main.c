@@ -1,4 +1,6 @@
 
+#include <Windows.h>
+
 #include <stdio.h> /* for printf */
 
 #include "wiiuse.h" /* for wiimote_t, classic_ctrl_t, etc */
@@ -28,26 +30,34 @@ void handle_event(struct wiimote_t *wm)
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_A))
     {
         printf("A pressed\n");
+        keybd_event(0x4A, 0x24, KEYEVENTF_EXTENDEDKEY | 0, 0); // J
     }
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_B))
     {
         printf("B pressed\n");
+        keybd_event(0x4C, 0x26, KEYEVENTF_EXTENDEDKEY | 0, 0); // L
     }
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_UP))
     {
         printf("UP pressed\n");
+        keybd_event(0x57, 0x11, KEYEVENTF_EXTENDEDKEY | 0, 0); //W
     }
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_DOWN))
     {
         printf("DOWN pressed\n");
+        keybd_event(0x53, 0x1F, KEYEVENTF_EXTENDEDKEY | 0, 0); // S
+
     }
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_LEFT))
     {
         printf("LEFT pressed\n");
+        keybd_event(0x41, 0x1E, KEYEVENTF_EXTENDEDKEY | 0, 0); // A
     }
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_RIGHT))
     {
         printf("RIGHT pressed\n");
+        keybd_event(0x44, 0x20, KEYEVENTF_EXTENDEDKEY | 0, 0); // D
+
     }
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_MINUS))
     {

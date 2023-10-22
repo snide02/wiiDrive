@@ -69,6 +69,11 @@ if(NOT SUBPROJECT)
 	if(BUILD_EXAMPLE_SDL)
 		add_subdirectory(example-sdl)
 	endif()
+
+	if(BUILD_EXAMPLE)
+		add_subdirectory(main)
+	endif()
+
 endif()
 
 if(SUBPROJECT)

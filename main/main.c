@@ -12,10 +12,18 @@
 float left;
 float right;
 
+int accelerometer_on = 0;
+int wiifit_on = 0;
+
 void handle_event(struct wiimote_t *wm)
 {
-    printf("\n\n--- EVENT [id %i] ---\n", wm->unid);
+    if (wiifit_on == 0 && wm->unid == 2) {
 
+    } else
+    {
+        printf("\n\n--- EVENT [id %i] ---\n", wm->unid);
+    }
+    
     /* if a button is pressed, report it */
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_A))
     {
@@ -52,16 +60,24 @@ void handle_event(struct wiimote_t *wm)
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_ONE))
     {
         printf("ONE pressed\n");
+        wiiuse_motion_sensing(wm, 1);
     }
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_TWO))
     {
         printf("TWO pressed\n");
+        if (wiifit_on == 1)
+        {
+            wiifit_on = 0;
+        } else
+        {
+            wiifit_on = 1;
+        }
+        wiiuse_motion_sensing(wm, 0);
     }
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_HOME))
     {
         printf("HOME pressed\n");
     }
-
 
     /*
      *	Pressing B will toggle the rumble
@@ -73,21 +89,29 @@ void handle_event(struct wiimote_t *wm)
         wiiuse_toggle_rumble(wm);
     }
 
-    if (wm->exp.type == EXP_WII_BOARD)
+    	/* if the accelerometer is turned on then print angles */
+    if (WIIUSE_USING_ACC(wm))
+    {
+        printf("wiimote roll  = %f [%f]\n", wm->orient.roll, wm->orient.a_roll);
+        printf("wiimote pitch = %f [%f]\n", wm->orient.pitch, wm->orient.a_pitch);
+        printf("wiimote yaw   = %f\n", wm->orient.yaw);
+    }
+
+    if (wm->exp.type == EXP_WII_BOARD && wiifit_on == 1)
     {
         /* wii balance board */
         struct wii_board_t *wb = (wii_board_t *)&wm->exp.wb;
         float total            = wb->tl + wb->tr + wb->bl + wb->br;
         float x                = ((wb->tr + wb->br) / total) * 2 - 1;
         float y                = ((wb->tl + wb->tr) / total) * 2 - 1;
-        //printf("Weight: %f kg @ (%f, %f)\n", total, x, y);
+        // printf("Weight: %f kg @ (%f, %f)\n", total, x, y);
         printf("Interpolated weight: TL:%f  TR:%f  BL:%f  BR:%f\n", wb->tl, wb->tr, wb->bl, wb->br);
         printf("Raw: TL:%d  TR:%d  BL:%d  BR:%d\n", wb->rtl, wb->rtr, wb->rbl, wb->rbr);
         /* float rtotal = wb->rtl + wb->rbl + wb->rtr + wb->rbr;
         left = ((wb->rtl + wb->rbl) / rtotal) * 2 - 1;
         right = ((wb->rtr + wb->rbr) / rtotal) * 2 - 1;*/
-        //left  = ((wb->tl + wb->bl) / total) * 2 - 1;
-        //right = ((wb->tr + wb->br) / total) * 2 - 1;
+        // left  = ((wb->tl + wb->bl) / total) * 2 - 1;
+        // right = ((wb->tr + wb->br) / total) * 2 - 1;
         left  = (wb->tl - wb->bl) / 2 - 0.33; //- wb->tl/2;
         right = (wb->tr - wb->br) / 2;
         printf("Left: %f\n", left);

@@ -9,6 +9,9 @@
 
 #define MAX_WIIMOTES 4
 
+float left;
+float right;
+
 void handle_event(struct wiimote_t *wm)
 {
     printf("\n\n--- EVENT [id %i] ---\n", wm->unid);
@@ -77,9 +80,18 @@ void handle_event(struct wiimote_t *wm)
         float total            = wb->tl + wb->tr + wb->bl + wb->br;
         float x                = ((wb->tr + wb->br) / total) * 2 - 1;
         float y                = ((wb->tl + wb->tr) / total) * 2 - 1;
-        printf("Weight: %f kg @ (%f, %f)\n", total, x, y);
+        //printf("Weight: %f kg @ (%f, %f)\n", total, x, y);
         printf("Interpolated weight: TL:%f  TR:%f  BL:%f  BR:%f\n", wb->tl, wb->tr, wb->bl, wb->br);
         printf("Raw: TL:%d  TR:%d  BL:%d  BR:%d\n", wb->rtl, wb->rtr, wb->rbl, wb->rbr);
+        /* float rtotal = wb->rtl + wb->rbl + wb->rtr + wb->rbr;
+        left = ((wb->rtl + wb->rbl) / rtotal) * 2 - 1;
+        right = ((wb->rtr + wb->rbr) / rtotal) * 2 - 1;*/
+        //left  = ((wb->tl + wb->bl) / total) * 2 - 1;
+        //right = ((wb->tr + wb->br) / total) * 2 - 1;
+        left  = (wb->tl - wb->bl) / 2 - 0.33; //- wb->tl/2;
+        right = (wb->tr - wb->br) / 2;
+        printf("Left: %f\n", left);
+        printf("Right: %f", right);
     }
 
 }
@@ -190,6 +202,7 @@ short any_wiimote_connected(wiimote **wm, int wiimotes)
  */
 int main(int argc, char **argv)
 {
+
     wiimote **wiimotes;
     int found, connected;
 
@@ -346,19 +359,12 @@ int main(int argc, char **argv)
                     printf("Balance board controller inserted.\n");
                     break;
 
-                case WIIUSE_GUITAR_HERO_3_CTRL_INSERTED:
-                    /* some expansion was inserted */
-                    handle_ctrl_status(wiimotes[i]);
-                    printf("Guitar Hero 3 controller inserted.\n");
-                    break;
-
                 case WIIUSE_MOTION_PLUS_ACTIVATED:
                     printf("Motion+ was activated\n");
                     break;
 
                 case WIIUSE_NUNCHUK_REMOVED:
                 case WIIUSE_CLASSIC_CTRL_REMOVED:
-                case WIIUSE_GUITAR_HERO_3_CTRL_REMOVED:
                 case WIIUSE_WII_BOARD_CTRL_REMOVED:
                 case WIIUSE_MOTION_PLUS_REMOVED:
                     /* some expansion was removed */

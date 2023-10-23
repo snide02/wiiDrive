@@ -32,15 +32,28 @@ void handle_event(struct wiimote_t *wm)
         printf("A pressed\n");
         keybd_event(0x4A, 0x24, KEYEVENTF_EXTENDEDKEY | 0, 0); // J
     }
+    else {
+        keybd_event(0x4A, 0x24, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0); // J
+    }
+
+
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_B))
     {
         printf("B pressed\n");
         keybd_event(0x4C, 0x26, KEYEVENTF_EXTENDEDKEY | 0, 0); // L
     }
+    else {
+        keybd_event(0x4C, 0x26, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0); // L
+    }
+
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_UP))
     {
         printf("UP pressed\n");
         keybd_event(0x57, 0x11, KEYEVENTF_EXTENDEDKEY | 0, 0); //W
+    }
+    else {
+        keybd_event(0x57, 0x11, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0); // W
+
     }
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_DOWN))
     {
@@ -48,10 +61,18 @@ void handle_event(struct wiimote_t *wm)
         keybd_event(0x53, 0x1F, KEYEVENTF_EXTENDEDKEY | 0, 0); // S
 
     }
+    else {
+        keybd_event(0x53, 0x1F, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0); // S
+
+    }
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_LEFT))
     {
         printf("LEFT pressed\n");
         keybd_event(0x41, 0x1E, KEYEVENTF_EXTENDEDKEY | 0, 0); // A
+    }
+    else {
+        keybd_event(0x41, 0x1E, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0); // A
+
     }
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_RIGHT))
     {
@@ -59,6 +80,11 @@ void handle_event(struct wiimote_t *wm)
         keybd_event(0x44, 0x20, KEYEVENTF_EXTENDEDKEY | 0, 0); // D
 
     }
+    else {
+        keybd_event(0x44, 0x20, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0); // D
+
+    }
+
     if (IS_PRESSED(wm, WIIMOTE_BUTTON_MINUS))
     {
         printf("MINUS pressed\n");
@@ -98,13 +124,34 @@ void handle_event(struct wiimote_t *wm)
     {
         wiiuse_toggle_rumble(wm);
     }
+    
 
     	/* if the accelerometer is turned on then print angles */
     if (WIIUSE_USING_ACC(wm))
     {
+        /*
         printf("wiimote roll  = %f [%f]\n", wm->orient.roll, wm->orient.a_roll);
         printf("wiimote pitch = %f [%f]\n", wm->orient.pitch, wm->orient.a_pitch);
         printf("wiimote yaw   = %f\n", wm->orient.yaw);
+        */
+
+        if (wm->orient.pitch > 30)
+        {
+            keybd_event(0x41, 0x1E, KEYEVENTF_EXTENDEDKEY | 0, 0); // A
+        } else
+        {
+            keybd_event(0x41, 0x1E, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0); // A
+        }
+
+        if (wm->orient.pitch < -30)
+        {
+            keybd_event(0x44, 0x20, KEYEVENTF_EXTENDEDKEY | 0, 0); // D
+
+        } else
+        {
+            keybd_event(0x44, 0x20, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0); // D
+        }
+
     }
 
     if (wm->exp.type == EXP_WII_BOARD && wiifit_on == 1)
